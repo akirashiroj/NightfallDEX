@@ -49,6 +49,14 @@ export function Home() {
     eeth: null,
     eusdt: null,
   });
+  const [faucetInputs, setFaucetInputs] = useState<Record<TokenKey, string>>({
+    eeth: '',
+    eusdt: '',
+  });
+  const [faucetStatus, setFaucetStatus] = useState<Record<TokenKey, string | null>>({
+    eeth: null,
+    eusdt: null,
+  });
   const [decryptState, setDecryptState] = useState<Record<
     TokenKey,
     { loading: boolean; value?: string; error?: string }
@@ -178,6 +186,39 @@ export function Home() {
     }
   };
 
+  const handleFaucet = async (tokenKey: TokenKey) => {
+    if (!address) {
+      setFaucetStatus(prev => ({ ...prev, [tokenKey]: 'Connect wallet first' }));
+      return;
+    }
+    const signer = await signerPromise;
+    if (!signer) {
+      setFaucetStatus(prev => ({ ...prev, [tokenKey]: 'No signer available' }));
+      return;
+    }
+
+    const parsedAmount = parseAmount(faucetInputs[tokenKey]);
+    if (!parsedAmount || parsedAmount <= 0n) {
+      setFaucetStatus(prev => ({ ...prev, [tokenKey]: 'Enter a valid amount' }));
+      return;
+    }
+
+    try {
+      setFaucetStatus(prev => ({ ...prev, [tokenKey]: 'Requesting faucet...' }));
+      const tokenContract = new Contract(TOKENS[tokenKey].address, TOKENS[tokenKey].abi, signer);
+      const tx = await tokenContract.faucet(address, parsedAmount);
+      await tx.wait();
+      setFaucetStatus(prev => ({ ...prev, [tokenKey]: 'Tokens minted' }));
+      setFaucetInputs(prev => ({ ...prev, [tokenKey]: '' }));
+    } catch (error) {
+      console.error('Faucet failed', error);
+      setFaucetStatus(prev => ({
+        ...prev,
+        [tokenKey]: error instanceof Error ? error.message : 'Faucet failed',
+      }));
+    }
+  };
+
   const updateDecryptState = (tokenKey: TokenKey, next: Partial<{ loading: boolean; value?: string; error?: string }>) => {
     setDecryptState(prev => ({
       ...prev,
@@ -258,7 +299,6 @@ export function Home() {
             </div>
 
             <p className="swap-card__hint">
-              Fixed rate: 1 eETH = {RATE.toString()} eUSDT
               {expectedOut !== null && amountInBase !== null && (
                 <>
                   <br />
@@ -275,6 +315,42 @@ export function Home() {
             {zamaError && <p className="swap-card__hint">Encryption error: {zamaError}</p>}
           </section>
         </div>
+
+        <section className="card" style={{ marginTop: '1.5rem' }}>
+          <h2 className="card__title">Faucet</h2>
+          <p className="swap-card__hint">
+            Mint test eETH or eUSDT directly to your connected address before swapping.
+          </p>
+          <div className="balance-grid">
+            {tokenOrder.map(tokenKey => (
+              <div className="card balance-card" key={`faucet-${tokenKey}`}>
+                <div className="balance-card__header">
+                  <div className="balance-card__token">{TOKENS[tokenKey].symbol}</div>
+                  {faucetStatus[tokenKey] && <span className="status-tag">{faucetStatus[tokenKey]}</span>}
+                </div>
+                <div className="swap-card__field">
+                  <label className="swap-card__label">Amount ({TOKENS[tokenKey].symbol})</label>
+                  <input
+                    className="swap-card__input"
+                    placeholder="100.0"
+                    value={faucetInputs[tokenKey]}
+                    onChange={event =>
+                      setFaucetInputs(prev => ({ ...prev, [tokenKey]: event.target.value }))
+                    }
+                    inputMode="decimal"
+                  />
+                </div>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => handleFaucet(tokenKey)}
+                  disabled={!isConnected || zamaLoading}
+                >
+                  Request faucet
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="card" style={{ marginTop: '1.5rem' }}>
           <h2 className="card__title">Operator access</h2>
