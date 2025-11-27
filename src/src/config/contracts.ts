@@ -1,6 +1,6 @@
 export const TOKENS = {
   eeth: {
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: '0xF2c59D6abA543684c31C6844284E6F70344fbE28',
     symbol: 'eETH',
     decimals: 6,
     abi: [
@@ -680,7 +680,7 @@ export const TOKENS = {
 ] as const,
   },
   eusdt: {
-    address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    address: '0x43B45971cB8f78D4597eF79f800a356D1be3f670',
     symbol: 'eUSDT',
     decimals: 6,
     abi: [
@@ -1362,7 +1362,7 @@ export const TOKENS = {
 } as const;
 
 export const NIGHTFALL_SWAP = {
-  address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+  address: '0xA7c7EbF3a85e0568DD0F0AE0b91C5B0AB3de89F5',
   abi: [
   {
     "inputs": [
