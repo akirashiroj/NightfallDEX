@@ -1,6 +1,6 @@
 # Nightfall DEX
 
-Nightfall DEX is a privacy-preserving swap that lets users exchange Zama FHEVM encrypted eETH and eUSDT at a fixed rate of `1 eETH = 3300 eUSDT`. All balances stay encrypted on-chain, while the frontend handles encryption, decryption, and swaps without ever revealing cleartext values to the network.
+Nightfall DEX is a privacy-preserving swap that lets users exchange Zama FHEVM encrypted eETH and eUSDT. All balances stay encrypted on-chain, while the frontend handles encryption, decryption, and swaps without ever revealing cleartext values to the network.
 
 ## Why it matters
 - Privacy-first DeFi: balances and swap amounts remain encrypted (ERC7984) while still being usable in smart contracts.
@@ -33,7 +33,6 @@ Nightfall DEX is a privacy-preserving swap that lets users exchange Zama FHEVM e
 - Tooling: eslint/solhint/prettier, solidity-coverage, hardhat-gas-reporter.
 
 ## Swap mechanics
-- Fixed rate: `ETH_TO_USDT_RATE` is 3300 and baked into the contract.
 - Input flow: the frontend encrypts the input with the relayer SDK (`createEncryptedInput`) and calls `swapEthToUsdt` or `swapUsdtToEth` with the handle and proof.
 - Output flow: amounts out are encrypted, ACL’d, and transferred back to the trader. `SwapExecuted` emits encrypted in/out values for optional client-side decryption.
 - Operator approval: each token requires a one-time `setOperator` grant to the swap contract before pull-based transfers.
