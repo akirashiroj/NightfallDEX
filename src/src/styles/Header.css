@@ -1,0 +1,48 @@
+.app-header {
+  padding: 3rem 0 1rem;
+}
+
+.app-header__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.app-header__text h1 {
+  margin: 0.25rem 0;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+.app-header__subtitle {
+  margin: 0;
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.app-header__eyebrow {
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #6366f1;
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.app-header__cta {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .app-header__content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .app-header__text {
+    max-width: 60%;
+  }
+}
